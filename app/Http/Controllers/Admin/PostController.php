@@ -41,7 +41,45 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            "title" => "required|min:5",
+            "content" => "required|min:20",
+          ]);
+      
+          $post = new Post();
+          $post->fill($data);
+      
+          // Genero lo slug partendo dal titolo
+          $slug = Str::slug($post->title);
+      
+          // controllo a db se esiste già un elemento con lo stesso slug
+          $exists = Post::where("slug", $slug)->first();
+          $counter = 1;
+      
+          // Fintanto che $exists ha un valore diverso da null o false,
+          // eseguo il while
+          while ($exists) {
+            // Genero un nuovo slug, prendendo quello precedente e concatenando un numero incrementale
+            $newSlug = $slug . "-" . $counter;
+            $counter++;
+      
+            // controllo a db se esiste già un elemento con i nuovo slug appena generato
+            $exists = Post::where("slug", $newSlug)->first();
+      
+            // Se non esiste, salvo il nuovo slug nella variabile $slub che verrà poi usata
+            // per assegnare il valore all'interno del nuovo post.
+            if (!$exists) {
+              $slug = $newSlug;
+            }
+          }
+      
+          // Assegno il valore di slug al nuovo post
+          $post->slug = $slug;
+          $post->user_id = Auth::user()->id;
+      
+          $post->save();
+      
+          return redirect()->route("admin.posts.index");
     }
 
     /**
