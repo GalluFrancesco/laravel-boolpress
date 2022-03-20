@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Post;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view("admin.posts.create");
+        $tags = Tag::all();
+
+        return view("admin.posts.create", compact( "tags"));
     }
 
     /**
@@ -44,6 +47,7 @@ class PostController extends Controller
         $data = $request->validate([
             "title" => "required|min:5",
             "content" => "required|min:20",
+            "tags" => "nullable"
           ]);
       
           $post = new Post();
@@ -78,6 +82,10 @@ class PostController extends Controller
           $post->user_id = Auth::user()->id;
       
           $post->save();
+
+          if (key_exists("tags", $data)) {
+            $post->tags()->attach($data["tags"]);
+          }
       
           return redirect()->route("admin.posts.index");
     }
@@ -91,7 +99,6 @@ class PostController extends Controller
     public function show($slug)
     {
         $post = Post::where("slug", $slug)->first();
-
         return view("admin.posts.show", compact("post"));
     }
 
@@ -104,8 +111,12 @@ class PostController extends Controller
     public function edit($slug)
     {
         $post = Post::where("slug", $slug)->first();
+        $tags = Tag::all();
     
-        return view("admin.posts.edit", compact("post"));
+        return view("admin.posts.edit", [
+          "post" => $post,
+          "tags" => $tags
+        ]);
     }
 
     /**
@@ -120,6 +131,7 @@ class PostController extends Controller
         $data = $request->validate([
             "title" => "required|min:5",
             "content" => "required|min:20",
+            "tags" => "nullable|exists:tags,id",
           ]);
       
           $post = Post::findOrFail($id);
@@ -149,7 +161,11 @@ class PostController extends Controller
             $data["slug"] = $slug;
         }
 
-        $post->update($data);
+        if (key_exists("tags", $data)) {
+          $post->tags()->sync($data["tags"]);
+        }else{
+          $post->tags()->detach();
+        }
 
         return redirect()->route("admin.posts.show", $post->slug);
     }

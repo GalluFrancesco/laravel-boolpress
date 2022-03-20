@@ -35,6 +35,18 @@
                 @enderror
               </div>
 
+              @foreach ($tags as $tag)
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" value="{{ $tag->id }}"
+                    id="tag_{{ $tag->id }}" name="tags[]" {{ $post->tags->contains($tag) ? 'checked' : '' }}>
+                  <label class="form-check-label" for="tag_{{ $tag->id }}">{{ $tag->name }}</label>
+                </div>
+              @endforeach
+              @dump($post->tags)
+              @error('tags')
+                <div class="text-red">{{ $message }}</div>
+              @enderror
+
               <div class="form-group">
                 <a href="{{ route('admin.posts.show', $post->slug) }}" class="btn btn-secondary">Annulla</a>
                 <button type="submit" class="btn btn-success">Salva post</button>
