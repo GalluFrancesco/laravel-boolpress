@@ -20,6 +20,9 @@
 
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item" v-for="route in routes" :key="route.path">
+            <router-link class="nav-link" :to="route.path"> {{route.meta.linkText}} </router-link>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/login"> Admin </a>
           </li>
@@ -30,7 +33,17 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data(){
+    return{
+      routes:[]
+    }
+  },
+  mounted(){
+    this.routes=this.$router.getRoutes();
+    
+  }
+};
 </script>
 
 <style></style>
