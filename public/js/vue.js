@@ -2119,7 +2119,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      post: {}
+      post: []
     };
   },
   methods: {
@@ -2133,11 +2133,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("api/posts/" + _this.$route.params.post);
+                return axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/api/posts/" + _this.$route.params.post);
 
               case 2:
                 resp = _context.sent;
-                _this.post = resp; //console.log(resp.data);
+                _this.post = resp.data;
 
               case 4:
               case "end":
@@ -2150,7 +2150,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   mounted: function mounted() {
     this.fetchPost();
-    console.log(this.$route.params.post);
   }
 });
 
@@ -3631,7 +3630,35 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_c("h1", [_vm._v(_vm._s(_vm.post.title))])])
+  return _c("div", [
+    _c("h1", [_vm._v(_vm._s(_vm.post.title))]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "mt-3 text-end d-flex align-items-center" },
+      [
+        _vm._l(_vm.post.tags, function (tag) {
+          return _c(
+            "span",
+            { key: tag.id, staticClass: "badge bg-primary me-2" },
+            [_vm._v(_vm._s(tag.name))]
+          )
+        }),
+        _vm._v(" "),
+        _vm.post.user
+          ? _c("em", { staticClass: "ms-auto" }, [
+              _vm._v(_vm._s(_vm.post.user.name)),
+            ])
+          : _vm._e(),
+      ],
+      2
+    ),
+    _vm._v(" "),
+    _c("div", {
+      staticClass: "mt-5 lead",
+      domProps: { innerHTML: _vm._s(_vm.post.content) },
+    }),
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

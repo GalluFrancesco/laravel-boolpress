@@ -16,7 +16,7 @@ class PostController extends Controller
     {
         $posts = Post::paginate(7);
 
-    $posts->load("user", "tags");
+        $posts->load("user", "tags");
         
     return response()->json($posts);
     }
@@ -53,7 +53,7 @@ class PostController extends Controller
         $post= Post::findOrFail($id);
         $post->load("user", "tags");
         
-        return response($post);
+        return response()->json($post);
     }
 
     /**
